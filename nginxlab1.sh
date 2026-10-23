@@ -11,12 +11,13 @@ sudo apt install nginx -y
 systemctl status nginx
 
 echo "#Install Nodejs, Yarn, PM2 & Dependencies"
-curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash - 
+sudo apt-get install -y ca-certificates curl gnupg git || exit 1
+sudo install -m 0755 -d /etc/apt/keyrings || exit 1
+curl -fsSL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo gpg --dearmor --yes --output /etc/apt/keyrings/yarn.gpg || exit 1
+echo "deb [signed-by=/etc/apt/keyrings/yarn.gpg] https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+bash -o pipefail -c 'curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -' || exit 1
 
 sudo apt install -y nodejs
-sudo apt install npm -y
 sudo apt install yarn -y
 sudo npm install -g pm2 -y
 
@@ -65,4 +66,3 @@ sudo printf '%s\n' '' \
 cp /etc/systemd/nodeapp.service /lib/systemd/system
 sudo systemctl enable nodeapp.service
 sudo systemctl start nodeapp
-
